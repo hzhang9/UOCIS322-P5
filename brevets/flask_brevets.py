@@ -86,8 +86,10 @@ def submit():
     location=request.form.getlist('location')
     for i in range(len(open_time)):
         if(open_time[i]!=""):
+            if (location[i]==""):
+                location[i]="None"
             db.tododb.insert_one({'open':open_time[i],'close':close_time[i],'km':km[i],'miles':miles[i],'location':location[i]}) 
-
+    if 
     return redirect(url_for('index'))
 
 #############

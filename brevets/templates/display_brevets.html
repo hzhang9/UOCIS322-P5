@@ -5,13 +5,12 @@
 	</head>
 	<body>
 	<div>
+	    <div>
+            <p>Display brevet:</p>
+            </div>
             {% for item in items %}
 	    <div>
-                <p>{{ item.miles }}</p>
-	        <p>{{ item.km }}</p>
-                <p>{{ item.location }}</p>
-                <p>{{ item.open }}</p>
-                <p>{{ item.close }}</p>
+                <p>miles: {{ item.miles }}, km: {{ item.km }}, location: {{ item.location }}, open time: {{ item.open }}, close time: {{ item.close }}</p>
             </div>
 	    {% endfor %}
 	</div>
