@@ -12,6 +12,7 @@ import configparser
 import config
 import os
 import logging
+from pymongo import MongoClient
 
 ###
 # Globals
@@ -37,6 +38,10 @@ db=client.tododb
 def index():
     app.logger.debug("Main page entry")
     return flask.render_template('calc.html')
+
+@app.route("/display")
+def display():
+    return flask.render_template("display.html",items=list(db.tododb.find()))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -71,17 +76,15 @@ def _calc_times():
     result = {"open": open_time, "close": close_time}
     return flask.jsonify(result=result)#pass on to calc.html
 
-@app.route("/display")
-def display():
-    return flask.render_template('display.html',items=list(db.tododb.find()))
-
-@app.route("/submit")
+@app.route("/_submit",methods=['GET'])
 def submit():
     open_time=request.form['open_time'].format('YYYY-MM-DDTHH:mm')
     close_time=request.form['close_time'].format('YYYY-MM-DDTHH:mm')
     km=request.form['km']
     miles=request.form['miles']
     location=request.form['location']
+
+
     db.tododb.insert_one({'open_time':open_time,'close_time':close_time,'km':km,'miles':miles,'location':location}) 
     return redirect(url_for('index'))
 

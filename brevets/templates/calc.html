@@ -49,7 +49,7 @@
          {% endif %}
          {% endwith %}
          <!-- Design on bootstrap grid -->
-         <form role="form">
+         <form role="form" action="/_submit" method="GET">
             <div class="row">
                <div class="col-md-4">
                   <label>Distance</label>
@@ -166,21 +166,17 @@
                        calc_times(control_entry);
                     });
 
-               });
+              
 
                $('#display').click(
                    function(e){
                        e.preventDefault();
+		       window.open("/display","_blank");
                    }
 	       );
-
-               $('#submit').click(
-		   function(e){
-	               e.preventDefault();
-		       window.open("/display","_blank");
-	           }
-	       );
-
+	       
+               
+               });
          </script>
       </div>
    </body>
