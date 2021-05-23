@@ -5,7 +5,7 @@ Replacement for RUSA ACP brevet time calculator
 """
 
 import flask
-from flask import request
+from flask import request,Flask,redirect,url_for,render_template
 import arrow  # Replacement for datetime, based on moment.js
 import acp_times  # Brevet time calculations
 import configparser
@@ -77,7 +77,13 @@ def display():
 
 @app.route("/submit")
 def submit():
-    return None
+    open_time=request.form['open_time'].format('YYYY-MM-DDTHH:mm')
+    close_time=request.form['close_time'].format('YYYY-MM-DDTHH:mm')
+    km=request.form['km']
+    miles=request.form['miles']
+    location=request.form['location']
+    db.tododb.insert_one({'open_time':open_time,'close_time':close_time,'km':km,'miles':miles,'location':location}) 
+    return redirect(url_for('index'))
 
 #############
 
