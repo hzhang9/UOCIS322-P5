@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+            <title>ACP Brevet Times</title>
+	</head>
+	<body>
+	<div>
+            {% for item in items %}
+	    <div>
+                <p>{{ item.miles }}</p>
+	        <p>{{ item.km }}</p>
+                <p>{{ item.location }}</p>
+                <p>{{ item.open }}</p>
+                <p>{{ item.close }}</p>
+            </div>
+	    {% endfor %}
+	</div>
+	</body>
+</html>

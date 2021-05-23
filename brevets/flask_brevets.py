@@ -41,7 +41,7 @@ def index():
 
 @app.route("/display")
 def display():
-    return flask.render_template("display.html",items=list(db.tododb.find()))
+    return flask.render_template("display_brevets.html",items=list(db.tododb.find()))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -76,16 +76,18 @@ def _calc_times():
     result = {"open": open_time, "close": close_time}
     return flask.jsonify(result=result)#pass on to calc.html
 
-@app.route("/_submit",methods=['GET'])
+@app.route("/_submit",methods=['POST'])
 def submit():
-    open_time=request.form['open_time'].format('YYYY-MM-DDTHH:mm')
-    close_time=request.form['close_time'].format('YYYY-MM-DDTHH:mm')
-    km=request.form['km']
-    miles=request.form['miles']
-    location=request.form['location']
+    db.tododb.drop()
+    open_time=request.form.getlist("open")
+    close_time=request.form.getlist("close")
+    km=request.form.getlist("km")
+    miles=request.form.getlist("miles")
+    location=request.form.getlist('location')
+    for i in range(len(open_time)):
+        if(open_time[i]!=""):
+            db.tododb.insert_one({'open':open_time[i],'close':close_time[i],'km':km[i],'miles':miles[i],'location':location[i]}) 
 
-
-    db.tododb.insert_one({'open_time':open_time,'close_time':close_time,'km':km,'miles':miles,'location':location}) 
     return redirect(url_for('index'))
 
 #############
