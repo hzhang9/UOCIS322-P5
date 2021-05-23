@@ -66,6 +66,10 @@
                   <label>Begins at</label>
                   <input type="datetime-local" name="begin_date" id="begin_date" value="2021-01-01T00:00" />
                </div>
+	       <div class="col-md-4">
+		   <button id="submit">Submit</button>
+		   <button id="display">Display</button>
+               </div>
                <!-- columns 5 to 10 -->
             </div>
             <!-- row -->
@@ -163,6 +167,18 @@
                     });
 
                });
+
+               $('#display').click(
+                   function(e){
+                       e.preventDefault();
+                   }
+	       );
+
+               $('#submit').click(
+		   function(e){
+	               e.preventDefault();
+	           }
+	       );
 
          </script>
       </div>

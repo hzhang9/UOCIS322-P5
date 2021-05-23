@@ -19,15 +19,15 @@ import logging
 app = flask.Flask(__name__)
 config = configparser.ConfigParser()
 if os.path.isfile("./credentials.ini"):
-    print("break1")
     config.read("./credentials.ini")
 else:
-    print("break2")
     config.read("./app.ini")
 global PORT
 PORT=config["DEFAULT"]["PORT"]
 global DEBUG
 DEBUG=config["DEFAULT"]["DEBUG"]
+client= MongoClient('mongodb://'+os.environ['MONGODB_HOSTNAME'],27017)
+db=client.tododb
 ###
 # Pages
 ###
@@ -37,7 +37,6 @@ DEBUG=config["DEFAULT"]["DEBUG"]
 def index():
     app.logger.debug("Main page entry")
     return flask.render_template('calc.html')
-
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -71,6 +70,15 @@ def _calc_times():
     close_time = acp_times.close_time(km, dist,arrow_bd).format('YYYY-MM-DDTHH:mm')
     result = {"open": open_time, "close": close_time}
     return flask.jsonify(result=result)#pass on to calc.html
+
+@app.route("/display")
+def display():
+    return flask.render_template('display.html',items=list(db.tododb.find()))
+
+@app.route("/submit")
+def submit():
+    return None
+
 #############
 
 app.debug = DEBUG
