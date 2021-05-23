@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    web:
+        build: .
+        command: python -u flask_brevets.py
+        ports:
+            - "5891:5000"
+        depends_on:
+            - tododb
+        environment:
+            MONGODB_HOSTNAME: tododb
+    tododb:
+        image: mongo:latest
