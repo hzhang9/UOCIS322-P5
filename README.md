@@ -47,6 +47,10 @@ In this project,  will add the following:
 
 4. Will shows error if inputed control distance is wrong or empty, detailed error response rule reference [https://rusa.org/octime_acp.html](https://rusa.org/octime_acp.html).
 
+## Testing
+
+Existing two testing file in tests/, test_open_close_time.py test time calculator, test_insert_and_retrieved.py test DB insert and retrieval. You can call run_tests.sh to run it, of course, freely changing or adding your own content to conduct more diverse testing.
+
 ## Identifying Information
 
 Author: Haoran Zhang, hzhang9@uoregon.edu
