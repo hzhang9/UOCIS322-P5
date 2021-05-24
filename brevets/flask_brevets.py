@@ -40,7 +40,7 @@ def index():
     return flask.render_template('calc.html')
 
 @app.route("/display")
-def display():
+def display():#jump to display.html with neccessnary data items
     return flask.render_template("display_brevets.html",items=list(db.tododb.find()))
 
 @app.errorhandler(404)
@@ -78,57 +78,71 @@ def _calc_times():
 
 @app.route("/_submit",methods=['POST'])
 def submit():
-    db.tododb.drop()
-    open_time=request.form.getlist("open")
+    db.tododb.drop()#clean db before submit
+    open_time=request.form.getlist("open")#get open_time, following 5 step is same
     close_time=request.form.getlist("close")
     km=request.form.getlist("km")
     miles=request.form.getlist("miles")
     location=request.form.getlist('location')
     brevet_dist=request.form.get('distance',type=int)
-    counter=0
-    repeat=False
-    repeat_check=[]
-    in_order=True
-    space_check=False
-    have_empty=False
-    temp_km=float(km[0])
+    counter=0#count # of db been insert
+    repeat=False#shows whether input repeat control time
+    repeat_check=[]#list to check whether input repeat control time
+    in_order=True#shows whether input order is from small ro large
+    space_check=False#check whether left space between inputed control time
+    have_empty=False#show whether left space between inputed control time
+    temp_km=float(km[0])#used to compare with above km,so inital as km[0]
+    last_dist=0#it hold last valid control distance 
     for i in range(len(km)):
-        if(km[i]!=""):
-            if location[i]=="":
+        if(km[i]!=""):#if not empty input
+            if location[i]=="":#location is option, so if doesn't input, change to none
                 location[i]="None"
             if space_check==True:
+            #if one of term is empty(means space_check alreadly change to true),
+            #and come to this step means current input isn't empty, existing empty
+            #input between to valid input,have_empty change to true, waiting for rise error
                 have_empty=True
             if km[i] in repeat_check:
+            #repeat_check hold passed valid input, if current input already in the list
+            #repeat being true and wait for rise error
                 repeat=True
             if float(km[i])<float(temp_km):
+            #temp_km hold last valid input, if temP_km bigger than current input,
+            #in_order change to False, waiting for rise error
                 in_order=False
             if float(km[i])>1.2*float(brevet_dist):
+            #every input control km cannot over more than 20% of bre distance
+            #if over jump to error_submit.html with below message
                 message="Input distance cannot over brevet distance more than 20%"
                 return flask.render_template('error_submit.html',message=message)
-            if float(km[i])<float(brevet_dist):
-                message="Last input control distance must over brevet distance"
-                return flask.render_template('error_submit.html',message=message)
-            app.logger.debug("type of km[i] is :"+str(type(km[i])))
-            app.logger.debug("km[i] is :"+str(km[i]))
-            temp_km=float(km[i])
-            app.logger.debug(temp_km)
-            repeat_check.append(km[i]) 
-            db.tododb.insert_one({'open':open_time[i],'close':close_time[i],'km':km[i],'miles':miles[i],'location':location[i]}) 
-            counter+=1
-        else:
+            last_dist=km[i]#update last control dist
+            temp_km=float(km[i])#update temp_km
+            repeat_check.append(km[i])#update repeat_check list 
+            db.tododb.insert_one({'open':open_time[i],'close':close_time[i],'km':km[i],'miles':miles[i],'location':location[i]})#insert to db
+            counter+=1#update counter
+        else:#else is empty input, space check change to true
             space_check=True
 
     if counter==0:
+    #if after above loop, counter still be 0, means all input is empty
+    #jump to error with below message
         message="Cannot submit empty"
         return flask.render_template('error_submit.html',message=message)
     elif repeat==True:
+    #if exist repeat, jump to error with below message
         message="Cannot submit repeat control distances"
         return flask.render_template('error_submit.html',message=message)
     elif in_order==False:
+    #if doesn't follow small to big rule, jump to error with below message
         message="Should input control distances from small to large"
         return flask.render_template('error_submit.html',message=message)
     elif have_empty==True:
-        message="Don't left empty between two valid  control time"
+    #if have empty between two valid control dist, jump to error with below message
+        message="Don't left empty between two valid control dist"
+        return flask.render_template('error_submit.html',message=message)
+    elif float(last_dist)<float(brevet_dist):
+    #if last control dist < brevet_dist, jump to error with below message
+        message="Last input control distance must over brevet distance"
         return flask.render_template('error_submit.html',message=message)
     return redirect(url_for('index'))
 
