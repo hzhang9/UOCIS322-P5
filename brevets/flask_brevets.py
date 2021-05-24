@@ -91,6 +91,9 @@ def submit():
     in_order=True#shows whether input order is from small ro large
     space_check=False#check whether left space between inputed control time
     have_empty=False#show whether left space between inputed control time
+    if(km[0]==""):#the condition first input is empty(not matter whether following input valid)
+        message="Cannot submit full empty, and first input also cannot be empty"
+        return flask.render_template('error_submit.html',message=message)
     temp_km=float(km[0])#used to compare with above km,so inital as km[0]
     last_dist=0#it hold last valid control distance 
     for i in range(len(km)):
@@ -122,13 +125,7 @@ def submit():
             counter+=1#update counter
         else:#else is empty input, space check change to true
             space_check=True
-
-    if counter==0:
-    #if after above loop, counter still be 0, means all input is empty
-    #jump to error with below message
-        message="Cannot submit empty"
-        return flask.render_template('error_submit.html',message=message)
-    elif repeat==True:
+    if repeat==True:
     #if exist repeat, jump to error with below message
         message="Cannot submit repeat control distances"
         return flask.render_template('error_submit.html',message=message)
