@@ -84,14 +84,14 @@ def submit():
     km=request.form.getlist("km")
     miles=request.form.getlist("miles")
     location=request.form.getlist('location')
-    brevet_dist=request.args.get('brevet_dist',type=int)
+    brevet_dist=request.form.get('distance',type=int)
     counter=0
     repeat=False
     repeat_check=[]
     in_order=True
-    temp_km=km[0]
     space_check=False
     have_empty=False
+    temp_km=float(km[0])
     for i in range(len(km)):
         if(km[i]!=""):
             if location[i]=="":
@@ -100,16 +100,17 @@ def submit():
                 have_empty=True
             if km[i] in repeat_check:
                 repeat=True
-            if km[i]<temp_km:
+            if float(km[i])<float(temp_km):
                 in_order=False
-            #if float(km[i])>float(1.2*brevet_dist):
-                #message="Input distance cannot over brevet distance more than 20%"
-                #return flask.render_template('error_submit.html',message=message)
-            #if float(km[i])<float(brevet_dist):
-                #message="Last input control distance must over brevet distance"
-                #return flask.render_template('error_submit.html',message=message)
-
-            temp_km=km[i]
+            if float(km[i])>1.2*float(brevet_dist):
+                message="Input distance cannot over brevet distance more than 20%"
+                return flask.render_template('error_submit.html',message=message)
+            if float(km[i])<float(brevet_dist):
+                message="Last input control distance must over brevet distance"
+                return flask.render_template('error_submit.html',message=message)
+            app.logger.debug("type of km[i] is :"+str(type(km[i])))
+            app.logger.debug("km[i] is :"+str(km[i]))
+            temp_km=float(km[i])
             app.logger.debug(temp_km)
             repeat_check.append(km[i]) 
             db.tododb.insert_one({'open':open_time[i],'close':close_time[i],'km':km[i],'miles':miles[i],'location':location[i]}) 
