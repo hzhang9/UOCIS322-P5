@@ -45,6 +45,7 @@ In this project,  will add the following:
 
 3. Upon clicking the `Display` button, the entries from the database should be displayed in a new page.
 
+4. Will shows error if input control distance is wrong or empty, detailed error response rule reference [https://rusa.org/octime_acp.html](https://rusa.org/octime_acp.html).
 
 ## Identifying Information
 
